@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
     try {
       // Consulta todos os registros da tabela alunos
-      const [rows] = await connection.execute('SELECT * FROM alunos');
+      const [rows] = await connection.execute('SELECT id_aluno, nome, data_nascimento, email, telefone, cpf FROM alunos');
       res.status(200).json(rows);
     } catch (error) {
       res.status(500).json({ error: 'Erro ao listar os alunos', details: error.message });
