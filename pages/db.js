@@ -1,24 +1,22 @@
-// lib/db.js
 import mysql from 'mysql2/promise';
 
 class Database {
   constructor(config) {
-    this.config = config;
-    this.connection = null;
+    this.pool = mysql.createPool(config); // Utiliza um pool ao invés de conexão única
   }
 
-  async connect() {
-    if (!this.connection) {
-      this.connection = await mysql.createConnection(this.config);
+  async execute(query, params) {
+    const connection = await this.pool.getConnection();
+    try {
+      const [rows] = await connection.execute(query, params);
+      return rows;
+    } finally {
+      connection.release(); // Garante que a conexão é liberada para o pool após o uso
     }
-    return this.connection;
   }
 
   async close() {
-    if (this.connection) {
-      await this.connection.end();
-      this.connection = null;
-    }
+    await this.pool.end();
   }
 }
 
@@ -27,6 +25,9 @@ const dbConfig = {
   user: 'root',
   password: '',
   database: 'avaliacao',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 };
 
 const db = new Database(dbConfig);
