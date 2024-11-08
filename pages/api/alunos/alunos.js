@@ -5,11 +5,11 @@ export default async function handler(req, res) {
   await runMiddleware(req, res);
 
   if (req.method === 'POST') {
-    const { nome, data_nascimento, email, telefone, cpf, senha } = req.body;
+    const { nome_aluno, email_aluno, senha_aluno } = req.body;
 
     try {
-      const query = 'INSERT INTO alunos (nome_aluno, email_aluno, senha_aluno) VALUES (?, ?, ?)';
-      await db.execute(query, [nome, data_nascimento, email, telefone, cpf, senha]);
+      const query = 'INSERT INTO aluno (nome_aluno, email_aluno, senha_aluno) VALUES (?, ?, ?)';
+      await db.execute(query, [nome_aluno, email_aluno, senha_aluno]);
 
       res.status(200).json({ message: 'Dados inseridos com sucesso!' });
     } catch (error) {
