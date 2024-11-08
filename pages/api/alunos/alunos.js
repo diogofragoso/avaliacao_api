@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const { nome, data_nascimento, email, telefone, cpf, senha } = req.body;
 
     try {
-      const query = 'INSERT INTO alunos (nome, data_nascimento, email, telefone, cpf, senha) VALUES (?, ?, ?, ?, ?, ?)';
+      const query = 'INSERT INTO alunos (nome_aluno, email_aluno, senha_aluno) VALUES (?, ?, ?)';
       await db.execute(query, [nome, data_nascimento, email, telefone, cpf, senha]);
 
       res.status(200).json({ message: 'Dados inseridos com sucesso!' });
