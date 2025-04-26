@@ -1,5 +1,5 @@
-import db from '../../db.js';
-import runMiddleware from '../../../middleware/cors.js';
+import db from '../../db.js'; // Ajuste o caminho conforme necessário
+import runMiddleware from '1../../../../middleware/cors.js'; // Ajuste o caminho conforme necessário'
 
 export default async function handler(req, res) {
   await runMiddleware(req, res);
