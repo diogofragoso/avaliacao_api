@@ -4,13 +4,13 @@ import db from '../../db.js'; // Ajuste o caminho conforme necessário
 export default async function handler(req, res) {
   await runMiddleware(req, res);
 
-  const { id } = req.query; // id será o parâmetro dinâmico na URL (ex: /api/avaliativas/1)
+  const { id } = req.query; // id será o parâmetro dinâmico na URL (ex: /api/stividadesavaliativas/1)
 
   if (req.method === 'GET') {
     try {
       const rows = await db.execute(
-        'SELECT id_avaliativa, descricao_avaliativa, id_indicador_fk FROM atividade_avaliativa WHERE id_indicador_fk = ?',
-        [id] // id será o id_uc vindo da URL
+        'SELECT * FROM atividade_avaliativa WHERE id_indicador_fk = ?',
+        [id] // id será o id do indicador que você está buscando
       );
 
       if (rows.length === 0) {
