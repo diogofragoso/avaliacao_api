@@ -2,11 +2,11 @@ import Cors from 'cors';
 
 // Configuração do middleware CORS
 const cors = Cors({
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  origin: '*',
+  origin: '*',                 // Permite qualquer origem (para produção, restrinja)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos, incluindo OPTIONS
 });
 
-// Função auxiliar para rodar o middleware
+// Função auxiliar para executar o middleware Cors com Promises
 function runMiddleware(req, res) {
   return new Promise((resolve, reject) => {
     cors(req, res, (result) => {
@@ -18,5 +18,4 @@ function runMiddleware(req, res) {
   });
 }
 
-// Exporta a função de execução do middleware
 export default runMiddleware;
