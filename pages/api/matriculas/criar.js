@@ -13,6 +13,11 @@ export default async function handler(req, res) {
       id_turma
     } = req.body;
 
+    // Validação básica
+    if (!nome_aluno || !email_aluno || !senha_aluno || !id_curso || !id_turma) {
+      return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios.' });
+    }
+
     try {
       // Verifica se o aluno já existe pelo e-mail
       const [alunoExistente] = await db.query(
@@ -26,15 +31,15 @@ export default async function handler(req, res) {
         // Aluno já existe
         id_aluno = alunoExistente[0].id_aluno;
       } else {
-        // Insere o novo aluno
-        const resultadoAluno = await db.query(
+        // Insere novo aluno
+        const [resultadoAluno] = await db.query(
           'INSERT INTO aluno (nome_aluno, email_aluno, senha_aluno) VALUES (?, ?, ?)',
           [nome_aluno, email_aluno, senha_aluno]
         );
-        id_aluno = resultadoAluno[0].insertId;
+        id_aluno = resultadoAluno.insertId;
       }
 
-      // Verifica se já existe matrícula
+      // Verifica se o aluno já está matriculado na turma
       const [matriculaExistente] = await db.query(
         'SELECT * FROM matricula WHERE id_aluno_fk = ? AND id_turma_fk = ?',
         [id_aluno, id_turma]
@@ -51,10 +56,12 @@ export default async function handler(req, res) {
       );
 
       return res.status(201).json({ mensagem: 'Matrícula realizada com sucesso!' });
+
     } catch (erro) {
       console.error('Erro ao realizar matrícula:', erro);
-      return res.status(500).json({ mensagem: 'Erro interno ao realizar matrícula.' });
+      return res.status(500).json({ mensagem: 'Erro interno ao realizar matrícula.', erro: erro.message });
     }
+
   } else {
     return res.status(405).json({ mensagem: 'Método não permitido' });
   }
