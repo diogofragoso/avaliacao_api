@@ -1,22 +1,21 @@
 import runMiddleware from '../../../../middleware/cors.js';
-import db from '../../../db.js'; // Certifique-se de que o caminho está correto
+import db from '../../../db.js';
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res); // Executa o CORS
+  await runMiddleware(req, res);
 
   if (req.method === 'PUT') {
-    const { id_avaliativa, descricao, id_indicador_fk } = req.body;
+    const { descricao, id_indicador_fk } = req.body;
+    const { id } = req.query;
 
-    // Validação dos campos
-    if (!id_avaliativa || !descricao || !id_indicador_fk) {
-      return res.status(400).json({ error: 'ID da atividade, descrição e ID do indicador são obrigatórios.' });
+    if (!id || !descricao || !id_indicador_fk) {
+      return res.status(400).json({ error: 'Descrição e ID do indicador são obrigatórios.' });
     }
 
     try {
-      // Atualizando a atividade avaliativa no banco de dados
       const result = await db.execute(
-        'UPDATE atividade_avaliativa SET descricao_avaliativa = ?, id_indicador_fk = ? WHERE id_avaliativa = ?',
-        [descricao, id_indicador_fk, id_avaliativa]
+        'UPDATE atividade_avaliativa SET descricao_avaliativa = ?, id_indicador_fk = ? WHERE id_at_avaliativa = ?',
+        [descricao, id_indicador_fk, id]
       );
 
       if (result.affectedRows === 0) {

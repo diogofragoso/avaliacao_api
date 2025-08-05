@@ -1,11 +1,11 @@
 import runMiddleware from '../../../../middleware/cors.js';
-import db from '../../../db.js'; // Ajuste conforme sua estrutura
+import db from '../../../db.js';
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res);  // Executa o CORS
+  await runMiddleware(req, res);
 
   if (req.method === 'DELETE') {
-    const { id } = req.query; // ID da atividade avaliativa
+    const { id } = req.query;
 
     if (!id) {
       return res.status(400).json({ error: 'ID da atividade não fornecido' });
@@ -15,8 +15,10 @@ export default async function handler(req, res) {
       const idNumber = Number(id);
       console.log('ID recebido para deleção da atividade:', idNumber);
 
-      // Executa a exclusão no banco de dados
-      const result = await db.execute('DELETE FROM atividade_avaliativa WHERE id_avaliativa = ?', [idNumber]);
+      const result = await db.execute(
+        'DELETE FROM atividade_avaliativa WHERE id_at_avaliativa = ?',
+        [idNumber]
+      );
 
       console.log('Resultado da deleção:', result);
 
