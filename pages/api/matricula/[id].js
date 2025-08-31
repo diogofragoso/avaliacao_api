@@ -10,12 +10,13 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const rows = await db.execute(
-        `SELECT a.id_aluno, a.nome_aluno, a.email_aluno
-         FROM matricula m
-         JOIN aluno a ON m.id_aluno_fk = a.id_aluno
-         WHERE m.id_turma_fk = ?`,
+        `SELECT m.id_matricula, a.id_aluno, a.nome_aluno, a.email_aluno
+          FROM matricula m
+          JOIN aluno a ON m.id_aluno_fk = a.id_aluno
+          WHERE m.id_turma_fk = ?`,
         [id]
       );
+
 
       res.status(200).json(rows);
     } catch (error) {
