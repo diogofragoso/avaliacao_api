@@ -21,14 +21,23 @@ class Database {
 }
 
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: '',
+  host: '136.248.122.225',
+  user: 'diogo',
+  password: 'D1234iogo@',
   database: 'avaliacao',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 };
+// const dbConfig = {
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'avaliacao',
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0,
+// };
 
 const db = new Database(dbConfig);
 export default db;
