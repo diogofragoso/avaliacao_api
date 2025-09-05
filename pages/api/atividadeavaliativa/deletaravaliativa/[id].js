@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       console.log('ID recebido para deleção da atividade:', idNumber);
 
       const result = await db.execute(
-        'DELETE FROM atividade_avaliativa WHERE id_at_avaliativa = ?',
+        'DELETE FROM atividade_avaliativa WHERE id_avaliativa = ?',
         [idNumber]
       );
 

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
     try {
       const result = await db.execute(
-        'UPDATE atividade_avaliativa SET descricao_avaliativa = ?, id_indicador_fk = ? WHERE id_at_avaliativa = ?',
+        'UPDATE atividade_avaliativa SET descricao_avaliativa = ?, id_indicador_fk = ? WHERE id_avaliativa = ?',
         [descricao, id_indicador_fk, id]
       );
 
