@@ -1,7 +1,7 @@
 // pages/api/ucs/editar/[id].js
 
 import runMiddleware from '../../../../middleware/cors.js';
-import db from '../../../db.js'; // Correção do caminho para o arquivo de conexão com o banco de dados
+import db from '../../../../lib/db.js'; // Correção do caminho para o arquivo de conexão com o banco de dados
 
 export default async function handler(req, res) {
   await runMiddleware(req, res); // Garante que o CORS será executado antes
