@@ -1,5 +1,5 @@
 import runMiddleware from '../../../middleware/cors.js';
-import db from '../../db.js';
+import db from '../../../lib/db.js';
 
 export default async function handler(req, res) {
   // Habilita o CORS para permitir requisições do seu front-end

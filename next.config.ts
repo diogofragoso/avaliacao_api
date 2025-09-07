@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   // Adiciona a configuração para ignorar os módulos nativos do Node.js no build do cliente
   webpack: (config, { isServer }) => {
     if (!isServer) {

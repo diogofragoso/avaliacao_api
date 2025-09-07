@@ -1,5 +1,5 @@
 import runMiddleware from '../../../middleware/cors.js';
-import db from '../../db.js'; // Ajuste conforme sua estrutura
+import db from '../../../lib/db.js'; // Ajuste conforme sua estrutura
 
 export default async function handler(req, res) {
   await runMiddleware(req, res);  // Executa o CORS

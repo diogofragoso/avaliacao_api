@@ -1,6 +1,6 @@
 // === /pages/api/turmas/editarturma/[id].js ===
 import runMiddleware from '../../../../middleware/cors.js';
-import db from '../../../db.js';
+import db from '../../../../lib/db.js';
 
 export default async function handler(req, res) {
   await runMiddleware(req, res);
