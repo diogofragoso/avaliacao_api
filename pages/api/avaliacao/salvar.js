@@ -51,7 +51,7 @@ export default async function handler(req, res) {
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ 
-        message: 'Não foi possível salvar, pois esta atividade já foi atribuída a um ou mais alunos da turma.' 
+        message: 'Não foi possível salvar, pois a atividade já foi atribuída para esta eturma.' 
       });
     }
     
