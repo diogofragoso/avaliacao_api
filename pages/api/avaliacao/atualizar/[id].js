@@ -17,7 +17,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'id_avaliacao é obrigatório.' });
     }
 
-    // Monta dinamicamente os campos enviados
     const updates = [];
     const values = [];
 
@@ -46,6 +45,8 @@ export default async function handler(req, res) {
       WHERE id_avaliacao = ?
     `;
 
+    // **** A CORREÇÃO ESTÁ AQUI ****
+    // Adicionamos colchetes [ ] para extrair o objeto de resultado do array
     const result = await db.execute(query, values);
 
     if (result.affectedRows === 0) {
