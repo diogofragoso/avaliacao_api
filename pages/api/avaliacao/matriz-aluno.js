@@ -21,7 +21,8 @@ export default async function handler(req, res) {
                 
                 -- Pega a avaliação específica deste ALUNO
                 aluno_av.id_avaliacao,
-                aluno_av.mencao
+                aluno_av.mencao,
+                aluno_av.acao_recuperacao -- <-- 1. ALTERAÇÃO AQUI: Adicionado o novo campo na query
             
             FROM curso c
             
@@ -29,10 +30,9 @@ export default async function handler(req, res) {
             LEFT JOIN indicador i ON uc.id_uc = i.id_uc_fk
             
             -- Junta para encontrar a atividade definida para a TURMA
-            -- (Assumindo que sua tabela 'avaliacao' guarda essa definição quando 'id_aluno_fk' é NULL)
             LEFT JOIN avaliacao def_turma ON i.id_indicador = def_turma.id_indicador_fk 
-                                          AND def_turma.id_turma_fk = ?
-                                          AND def_turma.id_aluno_fk IS NULL
+                                         AND def_turma.id_turma_fk = ?
+                                         AND def_turma.id_aluno_fk IS NULL
             
             -- Junta para encontrar a avaliação já salva do ALUNO
             LEFT JOIN avaliacao aluno_av ON i.id_indicador = aluno_av.id_indicador_fk
@@ -44,6 +44,10 @@ export default async function handler(req, res) {
         `, [turmaId, turmaId, alunoId, cursoId]);
 
         // Estrutura o JSON para o frontend
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Nenhum dado encontrado para os parâmetros fornecidos.' });
+        }
+        
         const curso = { id_curso: rows[0].id_curso, nome_curso: rows[0].nome_curso, ucs: [] };
         const ucsMap = new Map();
         
@@ -69,7 +73,8 @@ export default async function handler(req, res) {
                         // Adiciona os dados cruciais para o frontend
                         id_avaliativa_definida: row.id_avaliativa_definida,
                         id_avaliacao: row.id_avaliacao,
-                        mencao: row.mencao
+                        mencao: row.mencao,
+                        acao_recuperacao: row.acao_recuperacao // <-- 2. ALTERAÇÃO AQUI: Adicionado o novo campo ao objeto de resposta
                     });
                 }
             }

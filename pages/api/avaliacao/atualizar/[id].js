@@ -1,4 +1,3 @@
-// Caminho: src/pages/api/avaliacao/atualizar/[id].js
 import runMiddleware from '../../../../middleware/cors.js';
 import db from '../../../../lib/db.js';
 
@@ -11,7 +10,8 @@ export default async function handler(req, res) {
 
   try {
     const { id } = req.query;
-    const { mencao, data_avaliacao, observacao_avaliacao } = req.body;
+    // ALTERAÇÃO 1: Adicionado `acao_recuperacao` para ser lido do corpo da requisição
+    const { mencao, data_avaliacao, observacao_avaliacao, acao_recuperacao } = req.body;
 
     if (!id) {
       return res.status(400).json({ error: 'id_avaliacao é obrigatório.' });
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     const updates = [];
     const values = [];
 
+    // Lógica para os campos existentes (sem alteração)
     if (mencao !== undefined) {
       updates.push('mencao = ?');
       values.push(mencao);
@@ -33,6 +34,12 @@ export default async function handler(req, res) {
       values.push(observacao_avaliacao);
     }
 
+    // ALTERAÇÃO 2: Adicionada a lógica para o novo campo
+    if (acao_recuperacao !== undefined) {
+      updates.push('acao_recuperacao = ?');
+      values.push(acao_recuperacao);
+    }
+
     if (updates.length === 0) {
       return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
     }
@@ -44,9 +51,8 @@ export default async function handler(req, res) {
       SET ${updates.join(', ')}
       WHERE id_avaliacao = ?
     `;
-
-    // **** A CORREÇÃO ESTÁ AQUI ****
-    // Adicionamos colchetes [ ] para extrair o objeto de resultado do array
+    
+    // O `db.execute` já está correto
     const result = await db.execute(query, values);
 
     if (result.affectedRows === 0) {

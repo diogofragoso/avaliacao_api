@@ -30,7 +30,8 @@ export default async function handler(req, res) {
         i.descricao_indicador,
         av.data_avaliacao,
         av.mencao,
-        av.observacao_avaliacao
+        av.observacao_avaliacao,
+        av.acao_recuperacao
       FROM avaliacao av
       JOIN atividade_avaliativa atv 
         ON atv.id_avaliativa = av.id_at_avaliativa_fk
@@ -59,7 +60,8 @@ export default async function handler(req, res) {
         descricao_indicador: r.descricao_indicador,
         data_avaliacao: r.data_avaliacao,
         mencao: r.mencao,
-        observacao: r.observacao_avaliacao
+        observacao: r.observacao_avaliacao,
+        acao_recuperacao: r.acao_recuperacao      
       }))
     });
 
