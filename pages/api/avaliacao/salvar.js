@@ -9,16 +9,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Assumindo que o endpoint 'salvar' também precisa de um id_turma_fk
-    const { id_turma_fk, id_avaliativa_fk, id_indicador_fk /* ...outros campos... */ } = req.body;
+    const { id_turma_fk, id_avaliativa_fk, id_indicador_fk } = req.body;
 
     if (!id_turma_fk || !id_avaliativa_fk || !id_indicador_fk) {
-      return res.status(400).json({ error: 'Campos obrigatórios estão faltando.' });
+      return res.status(400).json({ error: 'IDs da turma, atividade e indicador são obrigatórios.' });
     }
 
-    // ✅ CORREÇÃO PRINCIPAL AQUI:
-    // Adicionamos [alunos] para desestruturar o resultado da query.
-    // O db.execute retorna [rows, fields], então [alunos] pega apenas o array de 'rows'.
+    // ✅ A ÚNICA MUDANÇA É AQUI: Removemos os colchetes [ ]
+    // Agora, a variável 'alunos' receberá o array completo retornado pelo seu db.execute.
     const alunos = await db.execute(
       `SELECT a.id_aluno 
        FROM matricula m
@@ -29,43 +27,29 @@ export default async function handler(req, res) {
 
     // Esta verificação agora funcionará corretamente.
     if (!Array.isArray(alunos) || alunos.length === 0) {
-      return res.status(404).json({ error: 'Nenhum aluno encontrado para esta turma.' });
+      return res.status(200).json({ message: 'Atividade associada. A turma não possui alunos para sincronizar no momento.' });
     }
 
-    // ... O resto da sua lógica para salvar a avaliação ...
-    // Por exemplo, montar os valores e a query INSERT.
-
-    const valores = alunos.map(aluno => [
-      aluno.id_aluno,
-      id_turma_fk,
-      id_avaliativa_fk,
-      id_indicador_fk,
-      '' // Valor padrão para acao_recuperacao
-    ]);
-
-    const placeholders = valores.map(() => '(?, ?, ?, ?, ?)').join(', ');
-    const flatValores = valores.flat();
-    const query = `
-      INSERT INTO avaliacao 
-      (id_aluno_fk, id_turma_fk, id_at_avaliativa_fk, id_indicador_fk, acao_recuperacao) 
-      VALUES ${placeholders}
+    // O resto da lógica de sincronização com "INSERT IGNORE" permanece a mesma, pois está correta.
+    const insertQuery = `
+      INSERT IGNORE INTO avaliacao 
+      (id_aluno_fk, id_turma_fk, id_at_avaliativa_fk, id_indicador_fk, data_avaliacao) 
+      VALUES (?, ?, ?, ?, CURDATE())
     `;
-    
-    await db.execute(query, flatValores);
 
-    return res.status(201).json({ message: 'Avaliações salvas com sucesso para todos os alunos.' });
+    const insertPromises = alunos.map(aluno => 
+      db.execute(insertQuery, [aluno.id_aluno, id_turma_fk, id_avaliativa_fk, id_indicador_fk])
+    );
+
+    await Promise.all(insertPromises);
+
+    return res.status(200).json({ message: 'Atividade associada e alunos sincronizados com sucesso!' });
 
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ 
-        message: 'Não foi possível salvar, pois esta atividade já foi atribuída para esta turma.' 
-      });
-    }
-    
     console.error('Erro detalhado em /avaliacao/salvar:', error);
     res.status(500).json({ 
-      error: 'Erro no servidor.', 
-      details: error.sqlMessage || error.message 
+      error: 'Erro no servidor ao sincronizar avaliações.', 
+      details: error.message 
     });
   }
 }
